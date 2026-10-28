@@ -1,0 +1,40 @@
+# Normalize line endings for a Windows -> Linux (Lightsail/Docker) workflow.
+#
+# Why this file matters: this repo is authored on Windows. Without an explicit
+# eol=lf rule, a checkout with core.autocrlf=true writes CRLF into the shell
+# scripts and Linux then fails with the classic
+#   /usr/bin/env: 'bash\r': No such file or directory
+# before a single line of the app runs. Docker only copies what is on disk, so
+# the image inherits exactly the same breakage.
+* text=auto
+
+# Shell + container files MUST be LF (the kernel/userland cannot parse CRLF).
+*.sh          text eol=lf
+Dockerfile    text eol=lf
+*.yml         text eol=lf
+*.yaml        text eol=lf
+.env.example  text eol=lf
+lightsail.env.example text eol=lf
+
+# Go sources stay LF too; the toolchain tolerates either but consistency keeps
+# diffs clean between the Windows dev box and the Linux host.
+*.go          text eol=lf
+
+# Node reads these on both platforms; LF keeps diffs stable.
+*.js          text eol=lf
+*.mjs         text eol=lf
+*.json        text eol=lf
+
+# Windows-only artifacts must NOT be mangled.
+*.bat         text eol=crlf
+*.cmd         text eol=crlf
+*.ps1         text eol=crlf
+
+# Binary assets.
+*.png         binary
+*.jpg         binary
+*.ico         binary
+*.zip         binary
+*.exe         binary
+*.db          binary
+

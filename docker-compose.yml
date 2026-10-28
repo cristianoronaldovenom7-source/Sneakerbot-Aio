@@ -1,0 +1,46 @@
+services:
+  sneakerbot:
+    build: .
+    container_name: sneakerbot
+    ports:
+      - "${PORT:-3000}:3000"
+    # Chromium writes shared memory to /dev/shm. Docker's 64 MB default makes
+    # renderers crash under load, so give it real room instead of relying on
+    # --disable-dev-shm-usage alone.
+    shm_size: 1gb
+    volumes:
+      # Create ./sneakerbot.db as a FILE before the first `up` (deploy does this),
+      # otherwise Docker creates a directory at the mount path and SQLite cannot
+      # open it. start.sh repairs that case at boot too.
+      - ./sneakerbot.db:/app/sneakerbot.db
+      - ./profiles:/app/profiles
+      - ./orders:/app/orders
+      - ./.local:/app/.local
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      # Sessions are lost on every restart if this stays at the default. The
+      # deploy script writes a random one into .env, which compose interpolates.
+      # The `:?` form makes a missing secret a hard failure instead of silently
+      # booting on "change-me-please" — a wrong secret invalidates every session
+      # and is invisible until the dashboard logs everyone out.
+      SESSION_SECRET: ${SESSION_SECRET:?SESSION_SECRET must be set in .env (openssl rand -hex 32)}
+      PUPPETEER_EXECUTABLE_PATH: /usr/bin/chromium
+      DB_POOL_MAX: "5"
+    restart: unless-stopped
+    # Chromium needs longer than Docker's 10s SIGKILL timer to close cleanly
+    # mid-checkout; cutting it short leaves a stale singleton lock in profiles/.
+    stop_grace_period: 30s
+    # Cap container logs here too: the daemon default is per-daemon, and a
+    # runaway Chromium stack trace can still fill a small Lightsail disk.
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 40s

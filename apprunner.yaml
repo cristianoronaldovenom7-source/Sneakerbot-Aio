@@ -1,0 +1,21 @@
+version: 1.0
+runtime: nodejs20
+build:
+  commands:
+    pre-build:
+      - cd tls-sidecar && GOPATH=/tmp/go go build -buildvcs=false -o sidecar . && cd ..
+    build:
+      - npm ci --omit=dev
+      - npm run migrate
+  env:
+    - name: NODE_ENV
+      value: production
+run:
+  runtime-version: 20
+  command: node app.js
+  network:
+    port: 3000
+    env: PORT
+  env:
+    - name: NODE_ENV
+      value: production

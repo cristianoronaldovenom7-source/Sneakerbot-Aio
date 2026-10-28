@@ -1,0 +1,22 @@
+version: 1
+backend:
+  phases:
+    build:
+      commands:
+        - npm ci
+        - npm run migrate
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - npm ci --omit=dev
+    build:
+      commands:
+        - node app.js &
+  artifacts:
+    baseDirectory: public
+    files:
+      - "**/*"
+  cache:
+    paths:
+      - node_modules/**/*

@@ -1,0 +1,32 @@
+node_modules/
+sneakerbot.db
+sneakerbot.db-shm
+sneakerbot.db-wal
+.env
+*.log
+coverage/
+.nyc_output/
+vendor/akamai-bmp/
+vendor/akamai-bmp-server
+vendor/akamai-bmp-devices.json
+tls-sidecar/sidecar
+profiles/
+orders/
+.local/cookie-jar.json
+
+# Bootstrap installs (helpers/bootstrap-env.js): downloaded runtimes and browser
+# trees are hundreds of MB and machine-specific, so they are never committed.
+.local/bin/
+.local/downloads/
+.local/runtimes/
+
+# Replit-specific (not needed on AWS)
+.replit
+.cache/
+.upm/
+.config/
+attached_assets/
+
+data/ops-ml.json
+/data/residential-bandwidth.json
+/data/residential-bandwidth.json.*.tmp

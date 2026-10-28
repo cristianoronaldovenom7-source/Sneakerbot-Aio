@@ -1,0 +1,59 @@
+modules = ["nodejs-20", "go-1.21", "python-3.11", "go-1.25"]
+[agent]
+expertMode = true
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Start application"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "TLS sidecar"
+
+[[workflows.workflow]]
+name = "Start application"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run migrate 2>&1 | tail -5; while true; do node app.js; echo '[App] process exited — restarting in 2s...'; sleep 2; done"
+waitForPort = 3000
+
+[workflows.workflow.metadata]
+outputType = "console"
+
+[[workflows.workflow]]
+name = "TLS sidecar"
+author = "agent"
+
+[workflows.workflow.metadata]
+outputType = "console"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd tls-sidecar && GOPROXY=direct GONOSUMDB='*' /nix/store/60z37432vmgkg54krwr1z057bqwp7583-go-1.25.5/bin/go run -buildvcs=false ."
+waitForPort = 8099
+
+[[ports]]
+localPort = 3000
+externalPort = 3000
+
+[[ports]]
+localPort = 8099
+externalPort = 8099
+
+[deployment]
+deploymentTarget = "autoscale"
+run = ["node", "app.js"]
+
+[nix]
+channel = "stable-25_05"
+packages = ["zip"]

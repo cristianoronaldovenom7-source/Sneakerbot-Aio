@@ -1,0 +1,54 @@
+{
+  "name": "sneakerbot",
+  "version": "1.0.1",
+  "description": "SneakerBot - Automated sneaker checkout bot API",
+  "type": "module",
+  "main": "app.js",
+  "scripts": {
+    "start": "node launcher.mjs",
+    "dev": "node --watch app.js",
+    "test": "node scripts/run-tests.mjs",
+    "migrate": "knex migrate:latest",
+    "seed": "knex seed:run",
+    "test:smoke": "node scripts/smoke-test.mjs",
+    "test:stealth": "node scripts/stealth-check.mjs",
+    "test:deploy": "bash scripts/deploy-logic-check.sh",
+    "test:full": "node --experimental-vm-modules node_modules/.bin/jest --forceExit",
+    "bench": "node scripts/bench.mjs",
+    "bench:e2e": "node scripts/e2e-latency.mjs"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "bcryptjs": "^3.0.3",
+    "better-sqlite3": "^12.10.0",
+    "connect-pg-simple": "^10.0.0",
+    "pg": "^8.11.0",
+    "dotenv": "^17.4.2",
+    "express": "^4.18.2",
+    "express-session": "^1.19.0",
+    "express-validation": "^4.1.0",
+    "got-scraping": "^4.2.1",
+    "joi": "^17.11.0",
+    "knex": "^3.1.0",
+    "nodemailer": "^6.9.7",
+    "puppeteer-core": "^24.42.0",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-anonymize-ua": "^2.4.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "rebrowser-puppeteer-core": "^24.8.1",
+    "winston": "^3.11.0"
+  },
+  "devDependencies": {
+    "@jest/globals": "^29.7.0",
+    "jest": "^29.7.0",
+    "knex-mock-client": "^3.0.2",
+    "supertest": "^6.3.3"
+  },
+  "jest": {
+    "transform": {},
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/__tests__/**/*.test.js"
+    ]
+  }
+}

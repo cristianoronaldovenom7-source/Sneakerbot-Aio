@@ -1,0 +1,28 @@
+node_modules
+.git
+.github
+.agents
+attached_assets
+profiles
+orders
+.local
+*.log
+coverage
+.nyc_output
+sneakerbot.db
+sneakerbot.db-shm
+sneakerbot.db-wal
+tls-sidecar/tls-sidecar
+vendor/akamai-bmp-server
+current_src
+__tests__
+*.txt
+
+# vendor/akamai-bmp-devices.json must stay IN the build context: it is needed at
+# runtime via --devicepath and is ~86 MB, so it is deliberately not excluded.
+
+# Secrets — never bake a real .env into the image (compose/systemd supply it).
+.env
+.env.*
+!.env.example
+lightsail.env.example
